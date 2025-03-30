@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Flake8 (lint)
+        run: |
+          pip install flake8
+          flake8 main.py
+
+      - name: Install kubectl (for Kustomize)
+        run: |
+          curl -sSLO https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/kubectl
+
+      - name: Validate Kustomize overlay
+        run: kubectl apply --dry-run=client -k k8s/overlays/dev
+
+      - name: Build Docker image (CI test)
+        run: docker build -t highpeaks-devops-agent-ci:build .

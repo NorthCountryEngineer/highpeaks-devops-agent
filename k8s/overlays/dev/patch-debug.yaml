@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: highpeaks-devops-agent
+spec:
+  template:
+    spec:
+      containers:
+      - name: devops-agent
+        # Add a DEBUG environment variable in development
+        env:
+        - name: DEBUG
+          value: "true"

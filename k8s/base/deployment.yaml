@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: highpeaks-devops-agent
+  labels:
+    app: highpeaks-devops-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: highpeaks-devops-agent
+  template:
+    metadata:
+      labels:
+        app: highpeaks-devops-agent
+    spec:
+      containers:
+      - name: devops-agent
+        image: highpeaks-devops-agent:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
